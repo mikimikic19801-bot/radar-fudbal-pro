@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sport radar</title>
+    <title>Fudbal radar</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030712">
-    <link class="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --bg: #030712;
@@ -16,44 +17,12 @@
             --drop: #ef4444; 
             --text: #f9fafb;
             --text-muted: #9ca3af;
-            --soccer-color: #3b82f6;
-            --basket-color: #f97316;
-            --handball-color: #a855f7;
         }
 
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             color: var(--text);
-            margin: 0; padding: 15px;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
-        }
-
-        .app-container { width: 100%; max-width: 440px; }
-
-        header { 
-            text-align: center; 
-            margin-top: 10px;
-            margin-bottom: 25px; 
-        }
-        
-        header h1 { 
-            font-size: 26px; 
-            font-weight: 900;
-            color: var(--text); 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        header h1 span {
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent-glow);
         }
 
         .radar-pulse {
@@ -71,31 +40,6 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        .action-card {
-            background: var(--card);
-            border-radius: 20px; padding: 20px;
-            border: 1px solid #1f2937;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        }
-
-        button {
-            background: var(--accent);
-            border: none; color: #000;
-            font-weight: 800; border-radius: 14px; padding: 16px;
-            cursor: pointer; transition: 0.15s ease-in-out; 
-            text-transform: uppercase;
-            width: 100%; font-size: 15px; letter-spacing: 1px;
-            box-shadow: 0 4px 14px var(--accent-glow);
-        }
-        button:active { transform: scale(0.98); background: #059669; }
-
-        .auto-toggle {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px; padding-top: 15px; border-top: 1px solid #1f2937;
-            font-size: 13px; font-weight: bold; color: var(--text-muted);
-        }
-
         .switch {
             position: relative; display: inline-block; width: 50px; height: 26px;
         }
@@ -110,422 +54,354 @@
         }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(24px); }
-
-        .sport-group {
-            margin-bottom: 25px;
-            width: 100%;
-        }
-
-        .sport-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            padding-left: 5px;
-        }
-
-        .sport-header.soccer { color: var(--soccer-color); }
-        .sport-header.basketball { color: var(--basket-color); }
-        .sport-header.handball { color: var(--handball-color); }
-
-        .match-card {
-            background: var(--card);
-            border-radius: 20px; padding: 20px;
-            margin-bottom: 15px; 
-            border: 1px solid #1f2937;
-            display: flex; flex-direction: column; gap: 15px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        }
-
-        .match-meta {
-            display: flex; justify-content: space-between; 
-            font-size: 12px; color: var(--text-muted);
-            font-weight: 700; text-transform: uppercase;
-            border-bottom: 1px solid #1f2937;
-            padding-bottom: 10px;
-        }
-
-        .live-badge {
-            color: var(--accent);
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .match-teams {
-            display: flex; justify-content: space-between; align-items: center;
-            gap: 15px;
-        }
-
-        .team-name {
-            font-size: 18px; font-weight: 800; color: var(--text);
-            flex: 1;
-        }
-        .team-name.home { text-align: right; }
-        .team-name.away { text-align: left; }
-
-        .score-box {
-            font-size: 24px; color: var(--text); font-weight: 900;
-            background: #1f2937; padding: 8px 16px; border-radius: 12px;
-            min-width: 60px; text-align: center;
-            border: 1px solid #374151;
-        }
-
-        .alert-box {
-            background: rgba(16, 185, 129, 0.1); 
-            color: #34d399;
-            padding: 12px 16px; border-radius: 12px; 
-            font-size: 13px; font-weight: 700; 
-            text-align: center; 
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            line-height: 1.4;
-        }
-
-        .info-box {
-            background: rgba(55, 65, 81, 0.3);
-            color: var(--text-muted);
-            padding: 10px 14px; border-radius: 12px;
-            font-size: 12px; font-weight: 600;
-            text-align: center;
-            border: 1px solid rgba(55, 65, 81, 0.5);
-        }
     </style>
 </head>
-<body>
+<body class="p-4 flex flex-col items-center min-height-screen">
 
-<div class="app-container">
-    <header>
-        <h1><span class="radar-pulse"></span>Sport <span>radar</span></h1>
+<div class="w-full max-w-[1000px]">
+    <header class="flex justify-between items-center mb-6 mt-2">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-500/20">
+                <span class="radar-pulse"></span>
+            </div>
+            <div>
+                <h1 class="text-xl font-black text-white tracking-wider uppercase">Fudbal <span class="text-emerald-400">radar</span></h1>
+                <p class="text-xs text-gray-400">Skeniranje kvota i live rezultata</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="bg-gray-800 p-2.5 rounded-full relative hover:bg-gray-700">
+                🔔 <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
+            </button>
+            <button onclick="manualScan()" class="bg-emerald-400 text-black font-extrabold px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-emerald-500 transition text-sm">
+                Skeniraj ručno 🔄
+            </button>
+        </div>
     </header>
 
-    <div class="action-card">
-        <button onclick="fetchAllSports()">
-            Skeniraj sve terene 🔄
-        </button>
-        <div class="auto-toggle">
-            <span>Automatsko skeniranje (na 5 min)</span>
-            <label class="switch">
-                <input type="checkbox" id="autoCheck" onchange="toggleAuto()">
-                <span class="slider"></span>
-            </label>
-        </div>
-    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-extrabold text-gray-300 uppercase tracking-wider">Status skenera</h3>
+                    <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-gray-950 p-3 rounded-xl border border-gray-800">
+                        <span class="text-[10px] text-gray-500 block font-bold uppercase">Rezultati API</span>
+                        <span class="text-xs text-emerald-400 font-extrabold">Ključ 1 aktivan</span>
+                    </div>
+                    <div class="bg-gray-950 p-3 rounded-xl border border-gray-800">
+                        <span class="text-[10px] text-gray-500 block font-bold uppercase">Kvote API</span>
+                        <span class="text-xs text-emerald-400 font-extrabold">TheOdds aktivan</span>
+                    </div>
+                </div>
 
-    <div id="radarMonitor">
-        <div style="text-align: center; color: var(--text-muted); padding: 40px 20px;">
-            <p style="font-size: 15px; margin: 0 0 10px 0; font-weight: 600;">Satelit u pripravnosti.</p>
-            <p style="font-size: 13px; margin: 0; color: #6b7280;">Svi sportovi su aktivni na tvom API profilu.</p>
+                <div class="flex justify-between items-center text-xs text-gray-400">
+                    <span>Sledeće skeniranje:</span>
+                    <span id="countdownTimer" class="font-extrabold text-white">Preostalo ~5m 00s</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-extrabold text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    🔔 Zone alarma
+                </h3>
+                
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center bg-gray-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-xs font-bold text-gray-300">Favorit gubi na meču</span>
+                        <span class="bg-red-500/10 text-red-400 text-[10px] font-black px-2.5 py-1 rounded-lg border border-red-500/20">&lt; 1.75</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-xs font-bold text-gray-300">Nerešeno u finišu</span>
+                        <span class="bg-amber-500/10 text-amber-400 text-[10px] font-black px-2.5 py-1 rounded-lg border border-amber-500/20">75' minut</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-950 p-3.5 rounded-xl border border-gray-800">
+                        <span class="text-xs font-bold text-gray-300">Pad kvote u presecima</span>
+                        <span class="bg-emerald-500/10 text-emerald-400 text-[10px] font-black px-2.5 py-1 rounded-lg border border-emerald-500/20">&gt; 10% (13h/17h)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-extrabold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                        🎯 Utakmice na radaru
+                    </h3>
+                    <span class="bg-gray-800 text-gray-400 text-xs font-bold px-3 py-1 rounded-lg" id="activeCount">Skenirano: 0</span>
+                </div>
+
+                <div id="radarMatchesContainer" class="flex flex-col gap-3">
+                    <div class="text-center py-10 text-gray-500">
+                        <p class="text-sm font-bold">Trenutno nema utakmica uživo na radaru.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-extrabold text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    📉 Automatski presek padova kvota (13:00 / 17:00)
+                </h3>
+                <div id="oddsDropContainer" class="text-sm text-gray-500 italic py-6">
+                    Nema registrovanih padova kvota iznad 10% u poslednjem preseku.
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const API_KEY = "f1cce1e4be71307c45a7a206e4a16495";
-    let autoInterval = null;
+    const FOOTBALL_API_KEY = "f1cce1e4be71307c45a7a206e4a16495";
+    const THEODDS_API_KEY = "YOUR_THEODDS_API_KEY"; // Unesi svoj ključ za TheOdds API
+    
+    let countdownSec = 300;
+    let countdownInterval = null;
+    let activeMatches = [];
     let knownAlerts = new Set();
 
-    if ("Notification" in window) {
-        Notification.requestPermission();
-    }
-
-    function playRadarSound() {
+    // Inicijalizacija zvuka
+    function playAlertSound() {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(1600, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.35);
-
-            gainNode.gain.setValueAtTime(0.35, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-
+            oscillator.frequency.setValueAtTime(1500, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.35);
+            oscillator.stop(audioCtx.currentTime + 0.3);
         } catch (e) {
-            console.log("Audio blokiran.");
+            console.log("Audio blokiran od strane pretraživača.");
         }
     }
 
-    function sendNotification(title, body, matchId) {
-        if (knownAlerts.has(matchId)) return;
-        knownAlerts.add(matchId);
-
-        playRadarSound();
-
-        if (Notification.permission === "granted") {
-            navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(title, {
-                    body: body,
-                    icon: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png",
-                    vibrate: [400, 100, 400],
-                    badge: "https://cdn-icons-png.flaticon.com/512/2619/2619245.png"
-                });
-            });
-        }
-    }
-
-    function toggleAuto() {
-        const isChecked = document.getElementById('autoCheck').checked;
-        if (isChecked) {
-            fetchAllSports();
-            autoInterval = setInterval(fetchAllSports, 300000);
-        } else {
-            clearInterval(autoInterval);
-        }
-    }
-
-    async function fetchFromAPI(endpoint, host) {
-        const response = await fetch(`https://${host}/${endpoint}`, {
-            method: 'GET',
-            headers: {
-                'x-rapidapi-host': host,
-                'x-rapidapi-key': API_KEY
+    // Tajmer za automatsko skeniranje
+    function startTimer() {
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownSec = 300;
+        countdownInterval = setInterval(() => {
+            countdownSec--;
+            let mins = Math.floor(countdownSec / 60);
+            let secs = countdownSec % 60;
+            document.getElementById('countdownTimer').innerText = `Preostalo ~${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+            
+            if (countdownSec <= 0) {
+                runScanner();
+                countdownSec = 300;
             }
-        });
-        const data = await response.json();
-        return data.response || [];
+        }, 1000);
     }
 
-    async function fetchAllSports() {
-        const monitor = document.getElementById('radarMonitor');
-        if (!document.getElementById('autoCheck').checked) {
-            monitor.innerHTML = '<p style="text-align: center; color: var(--accent); font-weight: 700; padding: 40px 0;">Skeniram satelitske podatke za sve sportove...</p>';
-        }
-
-        let soccerData = [];
-        let basketData = [];
-        let handballData = [];
-
+    async function fetchLiveResults() {
         try {
-            soccerData = await fetchFromAPI('fixtures?live=all', 'v3.football.api-sports.io');
+            const res = await fetch('https://v3.football.api-sports.io/fixtures?live=all', {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'v3.football.api-sports.io',
+                    'x-rapidapi-key': FOOTBALL_API_KEY
+                }
+            });
+            const data = await res.json();
+            return data.response || [];
         } catch (e) {
-            console.error("Fudbal API Offline:", e);
+            console.error("Greška pri povlačenju rezultata uživo:", e);
+            return [];
         }
+    }
 
+    async function fetchTheOdds() {
+        if (THEODDS_API_KEY === "YOUR_THEODDS_API_KEY") return [];
         try {
-            basketData = await fetchFromAPI('games?live=all', 'v1.basketball.api-sports.io');
+            const res = await fetch(`https://api.the-odds-api.com/v4/sports/soccer/odds/?apiKey=${THEODDS_API_KEY}&regions=eu&markets=h2h`);
+            const data = await res.json();
+            console.log("Kvote za sve dostupne lige učitane!");
+            return data;
         } catch (e) {
-            console.error("Košarka API Offline:", e);
-        }
-
-        try {
-            handballData = await fetchFromAPI('games?live=all', 'v1.handball.api-sports.io');
-        } catch (e) {
-            console.error("Rukomet API Offline:", e);
-        }
-
-        renderAllResults(soccerData, basketData, handballData);
-    }
-
-    function renderAllResults(soccer, basketball, handball) {
-        const monitor = document.getElementById('radarMonitor');
-        monitor.innerHTML = '';
-        let totalElementsAdded = 0;
-
-        // 1. FUDBAL SEKCIJA
-        const soccerElements = analyzeSoccer(soccer);
-        if (soccerElements.length > 0) {
-            totalElementsAdded += soccerElements.length;
-            const group = createSportGroup("Fudbal Radar", "soccer", "⚽");
-            soccerElements.forEach(card => group.appendChild(card));
-            monitor.appendChild(group);
-        }
-
-        // 2. KOŠARKA SEKCIJA
-        const basketElements = analyzeBasketball(basketball);
-        if (basketElements.length > 0) {
-            totalElementsAdded += basketElements.length;
-            const group = createSportGroup("Košarka Radar", "basketball", "🏀");
-            basketElements.forEach(card => group.appendChild(card));
-            monitor.appendChild(group);
-        }
-
-        // 3. RUKOMET SEKCIJA
-        const handballElements = analyzeHandball(handball);
-        if (handballElements.length > 0) {
-            totalElementsAdded += handballElements.length;
-            const group = createSportGroup("Rukomet Radar", "handball", "🤾");
-            handballElements.forEach(card => group.appendChild(card));
-            monitor.appendChild(group);
-        }
-
-        if (totalElementsAdded === 0) {
-            monitor.innerHTML = `
-                <div style="text-align: center; color: var(--text-muted); padding: 40px 20px;">
-                    <p style="font-size: 15px; margin: 0 0 10px 0; font-weight: 600;">Skeniranje uspešno.</p>
-                    <p style="font-size: 13px; margin: 0; color: #6b7280;">Nema trenutno aktivnih utakmica na mreži.</p>
-                </div>
-            `;
+            console.error("Greška pri povlačenju kvota sa TheOdds:", e);
+            return [];
         }
     }
 
-    function createSportGroup(title, className, emoji) {
-        const div = document.createElement('div');
-        div.className = 'sport-group';
-        div.innerHTML = `
-            <div class="sport-header ${className}">
-                <span>${emoji}</span> ${title}
-            </div>
-        `;
-        return div;
+    async function runScanner() {
+        document.getElementById('radarMatchesContainer').innerHTML = `
+            <div class="text-center py-10 text-emerald-400 font-bold">
+                Skeniram satelitske podatke i kvote...
+            </div>`;
+
+        const liveFixtures = await fetchLiveResults();
+        const theOddsData = await fetchTheOdds();
+
+        activeMatches = [];
+        document.getElementById('activeCount').innerText = `Skenirano: ${liveFixtures.length}`;
+
+        if (liveFixtures.length === 0) {
+            document.getElementById('radarMatchesContainer').innerHTML = `
+                <div class="text-center py-10 text-gray-500">
+                    <p class="text-sm font-bold">Trenutno nema utakmica uživo na radaru.</p>
+                </div>`;
+            return;
+        }
+
+        renderMatches(liveFixtures, theOddsData);
+        checkDropsPreseka(theOddsData);
     }
 
-    function analyzeSoccer(fixtures) {
-        const elements = [];
+    function renderMatches(fixtures, odds) {
+        const container = document.getElementById('radarMatchesContainer');
+        container.innerHTML = '';
+
         fixtures.forEach(match => {
-            const matchId = "soc_" + match.fixture.id;
-            const homeTeam = match.teams.home.name;
-            const awayTeam = match.teams.away.name;
-            const homeScore = match.goals.home;
-            const awayScore = match.goals.away;
+            const home = match.teams.home.name;
+            const away = match.teams.away.name;
+            const homeScore = match.goals.home ?? 0;
+            const awayScore = match.goals.away ?? 0;
             const elapsed = match.fixture.status.elapsed;
             const league = match.league.name;
+            const matchId = match.fixture.id;
+
+            // Sparivanje kvota iz TheOdds API-ja za ovaj meč
+            const matchOdds = findOddsForMatch(home, away, odds);
+            const initialHomeOdd = matchOdds ? matchOdds.homeOdd : null;
 
             let isAlert = false;
-            let alertReason = "";
+            let alertText = "Pratimo situaciju...";
 
-            if (elapsed >= 45 && elapsed <= 65 && awayScore > homeScore) {
+            // LOGIKA 1: Favorit gubi, a početna kvota na njega bila je < 1.75
+            if (initialHomeOdd && initialHomeOdd < 1.75 && awayScore > homeScore && elapsed <= 70) {
                 isAlert = true;
-                alertReason = "🔥 LIVE VALUE: Favorit gubi! Kvote na preokret i golove rastu.";
+                alertText = `🔥 LIVE VALUE: Favorit gubi na domaćem terenu! Početna kvota bila je ${initialHomeOdd}.`;
             }
-            else if (elapsed >= 75 && elapsed <= 85 && homeScore === 0 && awayScore === 0) {
+            // LOGIKA 2: Nerešeno u finišu (0:0 u 75. minutu) sa jakim favoritom na početku
+            else if (elapsed >= 75 && elapsed <= 85 && homeScore === 0 && awayScore === 0 && initialHomeOdd && initialHomeOdd < 1.75) {
                 isAlert = true;
-                alertReason = "⏰ FINIŠ DRAMA: Meč je na 0:0 u " + elapsed + "'. minutu. Traži se kasni gol!";
-            }
-            else if (elapsed >= 50 && elapsed <= 75 && homeScore === 1 && awayScore === 1) {
-                isAlert = true;
-                alertReason = "⚡ RESET KVOTE: 1:1 na terenu! Favorit juri vraćanje vođstva.";
+                alertText = `⏰ FINIŠ DRAMA: Meč je 0:0 u ${elapsed}'. minutu. Traži se kasni gol favorita!`;
             }
 
-            if (isAlert) {
-                elements.push(createMatchCard(league, elapsed + "'", homeTeam, awayTeam, `${homeScore}:${awayScore}`, alertReason, true));
-                sendNotification("Sport radar Signal!", `${homeTeam} - ${awayTeam} (${elapsed}'). ${alertReason}`, matchId);
-            } else {
-                elements.push(createMatchCard(league, elapsed + "'", homeTeam, awayTeam, `${homeScore}:${awayScore}`, "Pratimo situaciju...", false));
+            if (isAlert && !knownAlerts.has(matchId)) {
+                playAlertSound();
+                knownAlerts.add(matchId);
             }
+
+            const matchCard = document.createElement('div');
+            matchCard.className = "bg-gray-950 border border-gray-800 p-4 rounded-xl flex flex-col gap-3";
+            matchCard.innerHTML = `
+                <div class="flex justify-between items-center text-xs text-gray-500 font-bold border-b border-gray-900 pb-2">
+                    <span>🏆 ${league}</span>
+                    <span class="flex items-center gap-1.5 text-emerald-400">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> ${elapsed}' min
+                    </span>
+                </div>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-sm font-black text-white w-[40%] text-right truncate">${home}</span>
+                    <span class="bg-gray-900 text-emerald-400 font-black text-lg px-4 py-1.5 rounded-xl border border-gray-800 min-w-[70px] text-center">${homeScore}:${awayScore}</span>
+                    <span class="text-sm font-black text-white w-[40%] text-left truncate">${away}</span>
+                </div>
+                <div class="text-center">
+                    ${isAlert 
+                        ? `<div class="bg-red-500/10 text-red-400 text-xs font-extrabold p-2.5 rounded-lg border border-red-500/20">${alertText}</div>`
+                        : `<div class="bg-gray-900/50 text-gray-400 text-xs font-bold p-2 rounded-lg border border-gray-800">${alertText}</div>`
+                    }
+                </div>
+            `;
+            container.appendChild(matchCard);
         });
-        return elements;
     }
 
-    function analyzeBasketball(games) {
-        const elements = [];
-        games.forEach(game => {
-            const gameId = "bask_" + game.id;
-            const homeTeam = game.teams.home.name;
-            const awayTeam = game.teams.away.name;
-            const homeScore = game.scores.home.total || 0;
-            const awayScore = game.scores.away.total || 0;
-            const status = game.status.short; 
-            const league = game.league.name;
-
-            const q1Home = game.scores.home.quarter_1 || 0;
-            const q1Away = game.scores.away.quarter_1 || 0;
-            const q2Home = game.scores.home.quarter_2 || 0;
-            const q2Away = game.scores.away.quarter_2 || 0;
-            const q3Home = game.scores.home.quarter_3 || 0;
-            const q3Away = game.scores.away.quarter_3 || 0;
-
-            let isAlert = false;
-            let alertReason = "";
-
-            if ((status === "HT" || status === "Q3") && homeScore !== awayScore) {
-                isAlert = true;
-                alertReason = "🏀 POLUVREME ALARM: Favorit gubi na poluvremenu! Očekuje se snažan pritisak u nastavku.";
+    function findOddsForMatch(home, away, oddsList) {
+        if (!oddsList) return null;
+        const match = oddsList.find(o => 
+            o.home_team.toLowerCase().includes(home.toLowerCase()) || 
+            home.toLowerCase().includes(o.home_team.toLowerCase())
+        );
+        if (match && match.bookmakers && match.bookmakers[0]) {
+            const market = match.bookmakers[0].markets.find(m => m.key === 'h2h');
+            if (market) {
+                const homeOutcome = market.outcomes.find(out => out.name === match.home_team);
+                const awayOutcome = market.outcomes.find(out => out.name === match.away_team);
+                return {
+                    homeOdd: homeOutcome ? homeOutcome.price : null,
+                    awayOdd: awayOutcome ? awayOutcome.price : null
+                };
             }
-            else {
-                const diffQ1 = Math.abs(q1Home - q1Away);
-                const diffQ2 = Math.abs(q2Home - q2Away);
-                const diffQ3 = Math.abs(q3Home - q3Away);
+        }
+        return null;
+    }
 
-                if (diffQ1 >= 10 && status === "Q2") {
-                    isAlert = true;
-                    alertReason = "🔥 KONTRA-TREND: Favorit je izgubio prvu četvrtinu sa " + diffQ1 + " razlike! Traži se odgovor.";
-                } else if (diffQ2 >= 10 && status === "Q3") {
-                    isAlert = true;
-                    alertReason = "🔥 KONTRA-TREND: Favorit je izgubio drugu četvrtinu sa " + diffQ2 + " razlike! Traži se odgovor.";
-                } else if (diffQ3 >= 10 && status === "Q4") {
-                    isAlert = true;
-                    alertReason = "🔥 KONTRA-TREND: Favorit je izgubio treću četvrtinu sa " + diffQ3 + " razlike! Traži se odgovor.";
+    // Provera i pamćenje preseka u 13:00 i 17:00 h
+    function checkDropsPreseka(odds) {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+
+        // Okidač za presek u 13:00 i 17:00 (prozor od 5 minuta)
+        if ((currentHour === 13 || currentHour === 17) && currentMinute < 5) {
+            localStorage.setItem(`odds_presek_${currentHour}`, JSON.stringify(odds));
+            calculatePresekDrops(currentHour);
+        }
+    }
+
+    function calculatePresekDrops(hour) {
+        const prevHour = hour === 17 ? 13 : null;
+        if (!prevHour) return;
+
+        const baseOddsRaw = localStorage.getItem(`odds_presek_${prevHour}`);
+        const currentOddsRaw = localStorage.getItem(`odds_presek_${hour}`);
+
+        if (baseOddsRaw && currentOddsRaw) {
+            const baseOdds = JSON.parse(baseOddsRaw);
+            const currentOdds = JSON.parse(currentOddsRaw);
+            const dropContainer = document.getElementById('oddsDropContainer');
+            dropContainer.innerHTML = '';
+
+            let hasDrops = false;
+
+            currentOdds.forEach(curr => {
+                const prev = baseOdds.find(b => b.id === curr.id);
+                if (prev) {
+                    const currOdds = findOddsForMatch(curr.home_team, curr.away_team, [curr]);
+                    const prevOdds = findOddsForMatch(prev.home_team, prev.away_team, [prev]);
+
+                    if (currOdds && prevOdds && prevOdds.homeOdd && currOdds.homeOdd) {
+                        const changePercent = ((prevOdds.homeOdd - currOdds.homeOdd) / prevOdds.homeOdd) * 100;
+
+                        if (changePercent >= 10) {
+                            hasDrops = true;
+                            const dropItem = document.createElement('div');
+                            dropItem.className = "bg-gray-950 border border-red-500/10 p-3 rounded-lg mb-2 text-xs flex justify-between items-center text-red-400 font-extrabold";
+                            dropItem.innerHTML = `
+                                <span>📉 ${curr.home_team} - ${curr.away_team}</span>
+                                <span>Pad: -${changePercent.toFixed(1)}% (${prevOdds.homeOdd.toFixed(2)} -> ${currOdds.homeOdd.toFixed(2)})</span>
+                            `;
+                            dropContainer.appendChild(dropItem);
+                        }
+                    }
                 }
-            }
+            });
 
-            if (isAlert) {
-                elements.push(createMatchCard(league, status, homeTeam, awayTeam, `${homeScore}:${awayScore}`, alertReason, true));
-                sendNotification("Košarka Radar Signal!", `${homeTeam} - ${awayTeam} (${status}). ${alertReason}`, gameId);
-            } else {
-                elements.push(createMatchCard(league, status, homeTeam, awayTeam, `${homeScore}:${awayScore}`, "Pratimo kretanje rezultata...", false));
+            if (!hasDrops) {
+                dropContainer.innerHTML = "Nema registrovanih padova kvota iznad 10% u poslednjem preseku.";
             }
-        });
-        return elements;
+        }
     }
 
-    function analyzeHandball(games) {
-        const elements = [];
-        games.forEach(game => {
-            const gameId = "hand_" + game.id;
-            const homeTeam = game.teams.home.name;
-            const awayTeam = game.teams.away.name;
-            const homeScore = game.scores.home || 0;
-            const awayScore = game.scores.away || 0;
-            const elapsed = game.status.short; 
-            const league = game.league.name;
-            const totalGoals = homeScore + awayScore;
-
-            let isAlert = false;
-            let alertReason = "";
-
-            if (elapsed === "SH2" && awayScore > homeScore) {
-                isAlert = true;
-                alertReason = "🤾 NEOČEKIVANO: Gost vodi u drugom poluvremenu! Očekuje se odgovor.";
-            }
-            else if (elapsed === "HT" && (totalGoals <= 18 || totalGoals >= 35)) {
-                isAlert = true;
-                alertReason = "📊 POLUVREME ANOMALIJA: Postignuto je " + totalGoals + " golova! Granica za golove se pomera.";
-            }
-
-            if (isAlert) {
-                elements.push(createMatchCard(league, "Uživo", homeTeam, awayTeam, `${homeScore}:${awayScore}`, alertReason, true));
-                sendNotification("Rukomet Radar Signal!", `${homeTeam} - ${awayTeam}. ${alertReason}`, gameId);
-            } else {
-                elements.push(createMatchCard(league, "Uživo", homeTeam, awayTeam, `${homeScore}:${awayScore}`, "Pratimo golove...", false));
-            }
-        });
-        return elements;
+    function manualScan() {
+        runScanner();
     }
 
-    function createMatchCard(league, meta, home, away, score, text, isAlert) {
-        const card = document.createElement('div');
-        card.className = 'match-card';
-        
-        const bottomBox = isAlert 
-            ? `<div class="alert-box">${text}</div>` 
-            : `<div class="info-box">${text}</div>`;
-
-        card.innerHTML = `
-            <div class="match-meta">
-                <span>🏆 ${league}</span>
-                <span class="live-badge"><span class="radar-pulse"></span>${meta}</span>
-            </div>
-            <div class="match-teams">
-                <span class="team-name home">${home}</span>
-                <span class="score-box">${score}</span>
-                <span class="team-name away">${away}</span>
-            </div>
-            ${bottomBox}
-        `;
-        return card;
-    }
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
+    // Pokretanje
+    startTimer();
+    runScanner();
 </script>
 </body>
 </html>
