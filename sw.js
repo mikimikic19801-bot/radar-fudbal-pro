@@ -1,23 +1,22 @@
-const CACHE_NAME = 'fudbal-radar-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png'
+const CACHE_NAME = 'radar-cache-v3';
+const ASSETS_TO_CACHE = [
+  'index.html',
+  'manifest.json',
+  'icon-192.png'
 ];
 
-// Instalacija Service Worker-a i keširanje osnovnih fajlova
-self.addEventListener('install', (e) => {
-  e.waitUntil(
+// Instaliranje i keširanje strukture
+self.addEventListener('install', (event) => {
+  event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+      return cache.addAll(ASSETS_TO_CACHE);
+    }).then(() => self.skipWaiting())
   );
 });
 
-// Aktivacija i čišćenje starog keša
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
+// Aktivacija i čišćenje starih keševa
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
@@ -26,23 +25,36 @@ self.addEventListener('activate', (e) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-// Presretanje zahteva (mrežni zahtevi idu uživo, lokalni fajlovi iz keša)
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
+// Presretanje zahteva (API zahtevi idu uživo, lokalni fajlovi iz keša)
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
 
-  // Ako zahtev ide ka API-ju (v3.football ili api.the-odds-api), uvek guraj direktno na mrežu bez keširanja
   if (url.hostname.includes('api-sports.io') || url.hostname.includes('the-odds-api.com')) {
-    e.respondWith(fetch(e.request));
+    event.respondWith(fetch(event.request));
   } else {
-    // Za standardne fajlove (HTML, CSS, slike) koristi keš, uz prebacivanje na mrežu ako zatreba
-    e.respondWith(
-      caches.match(e.request).then((cachedResponse) => {
-        return cachedResponse || fetch(e.request);
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        return cachedResponse || fetch(event.request);
       })
     );
   }
+});
+
+// Upravljanje klikom na sistemsku notifikaciju
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close(); // Zatvori notifikaciju
+
+  // Otvori aplikaciju kada korisnik klikne na nju
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      if (clientList.length > 0) {
+        return clientList[0].focus();
+      }
+      return clients.openWindow('./index.html');
+    })
+  );
 });
