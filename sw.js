@@ -1,45 +1,48 @@
-const cacheName = 'fudbal-radar-v1';
-const assetsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://unpkg.com/lucide@latest'
+const CACHE_NAME = 'fudbal-radar-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png'
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(cacheName).then(cache => {
-      return cache.addAll(assetsToCache);
+// Instalacija Service Worker-a i keširanje osnovnih fajlova
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
     })
   );
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => {
+// Aktivacija i čišćenje starog keša
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter(key => key !== cacheName).map(key => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
     })
   );
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      return cachedResponse || fetch(event.request);
-    })
-  );
-});
+// Presretanje zahteva (mrežni zahtevi idu uživo, lokalni fajlovi iz keša)
+self.addEventListener('fetch', (e) => {
+  const url = new URL(e.request.url);
 
-self.addEventListener('push', event => {
-  const data = event.data ? event.data.text() : 'Nova fudbalska dešavanja na radaru!';
-  event.waitUntil(
-    self.registration.showNotification('Fudbal Radar', {
-      body: data,
-      icon: 'https://img.icons8.com/color/192/soccer-ball--v1.png',
-      vibrate: [300, 110, 300]
-    })
-  );
+  // Ako zahtev ide ka API-ju (v3.football ili api.the-odds-api), uvek guraj direktno na mrežu bez keširanja
+  if (url.hostname.includes('api-sports.io') || url.hostname.includes('the-odds-api.com')) {
+    e.respondWith(fetch(e.request));
+  } else {
+    // Za standardne fajlove (HTML, CSS, slike) koristi keš, uz prebacivanje na mrežu ako zatreba
+    e.respondWith(
+      caches.match(e.request).then((cachedResponse) => {
+        return cachedResponse || fetch(e.request);
+      })
+    );
+  }
 });
